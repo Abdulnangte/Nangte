@@ -1,129 +1,87 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hitung Trading</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pilih Kalkulator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 16px; max-width: 520px; margin: 0 auto; }
-    h1 { font-size: 22px; margin: 0 0 10px; }
-    .muted { color:#666; font-size: 13px; margin-bottom: 12px; }
-    label { display:block; margin-top: 12px; font-size: 14px; }
-    input { width: 100%; padding: 10px; font-size: 16px; margin-top: 6px; }
-    button { width: 100%; padding: 12px; font-size: 16px; margin-top: 14px; }
-    .box { margin-top: 14px; padding: 12px; border: 1px solid #ddd; border-radius: 10px; }
-    .row { display:flex; justify-content:space-between; gap: 10px; margin: 6px 0; }
-    .big { font-size: 18px; font-weight: bold; }
-    .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; border:1px solid #ddd; font-size: 12px; }
-    .sectionTitle { margin-top: 18px; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f8fb;
+      margin: 0;
+      padding: 24px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      cursor: pointer;
+    }
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .icon.blue { background: #6c6ff5; }
+    .icon.green { background: #1cc88a; }
+    .label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #888;
+    }
+    .title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .desc {
+      font-size: 13px;
+      color: #666;
+    }
   </style>
 </head>
+
 <body>
-  <h1>📊 Hitung Trading</h1>
-  <div class="muted">
-    1 lot = 100 lembar. Isi data, lalu tekan <b>Hitung</b>.
+  <h1>Pilih Kalkulator</h1>
+  <div class="subtitle">Analisa tradingmu lebih akurat & cepat.</div>
+
+  <!-- ALAT 1 -->
+  <div class="card" onclick="location.href='standard.html'">
+    <div class="icon blue">📊</div>
+    <div>
+      <div class="label">ALAT 1</div>
+      <div class="title">Trading Standar</div>
+      <div class="desc">Hitung profit cepat & target harga (tick).</div>
+    </div>
   </div>
 
-  <label>Harga Beli (Rp)</label>
-  <input id="buyPrice" type="number" inputmode="numeric" placeholder="contoh: 500" />
-
-  <label>Harga Jual (Rp)</label>
-  <input id="sellPrice" type="number" inputmode="numeric" placeholder="contoh: 560" />
-
-  <label>Jumlah Lot</label>
-  <input id="lots" type="number" inputmode="numeric" placeholder="contoh: 10" />
-
-  <label>Fee Beli % (opsional)</label>
-  <input id="feeBuy" type="number" inputmode="decimal" placeholder="contoh: 0.15" />
-
-  <label>Fee Jual % (opsional)</label>
-  <input id="feeSell" type="number" inputmode="decimal" placeholder="contoh: 0.25" />
-
-  <div class="sectionTitle">🎯 Target Otomatis (TP / CL)</div>
-
-  <label>Take Profit % (TP)</label>
-  <input id="tpPct" type="number" inputmode="decimal" placeholder="contoh: 5" />
-
-  <label>Cut Loss % (CL)</label>
-  <input id="clPct" type="number" inputmode="decimal" placeholder="contoh: 3" />
-
-  <button onclick="calc()">Hitung</button>
-
-  <div class="box" id="resultBox" style="display:none;">
-    <div class="row"><div><span class="pill">P/L</span> Modal (net)</div><div id="modal">-</div></div>
-    <div class="row"><div>Hasil Jual (net)</div><div id="hasil">-</div></div>
-    <div class="row"><div class="big">Profit / Loss</div><div id="pl" class="big">-</div></div>
-    <div class="row"><div>% Profit</div><div id="plPct">-</div></div>
-
-    <div class="sectionTitle">🎯 Target Harga (berdasarkan harga beli)</div>
-    <div class="row"><div>Harga TP</div><div id="tpPrice" class="big">-</div></div>
-    <div class="row"><div>Harga CL</div><div id="clPrice" class="big">-</div></div>
+  <!-- ALAT 2 -->
+  <div class="card" onclick="location.href='avgdown.html'">
+    <div class="icon green">🧮</div>
+    <div>
+      <div class="label">ALAT 2</div>
+      <div class="title">Average Down Dinamis</div>
+      <div class="desc">Beli bertahap di banyak harga & lot.</div>
+    </div>
   </div>
-
-  <script>
-    function rupiah(n) {
-      return "Rp " + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-
-    // pembulatan ke "tick" sederhana:
-    // < 200 => kelipatan 1
-    // 200-499 => kelipatan 2
-    // 500-1999 => kelipatan 5
-    // >=2000 => kelipatan 10
-    function roundToTick(price) {
-      let tick = 1;
-      if (price >= 200 && price <= 499) tick = 2;
-      else if (price >= 500 && price <= 1999) tick = 5;
-      else if (price >= 2000) tick = 10;
-      return Math.round(price / tick) * tick;
-    }
-
-    function calc() {
-      const buy = Number(document.getElementById("buyPrice").value);
-      const sell = Number(document.getElementById("sellPrice").value);
-      const lots = Number(document.getElementById("lots").value);
-
-      const feeBuyPct = Number(document.getElementById("feeBuy").value || 0);
-      const feeSellPct = Number(document.getElementById("feeSell").value || 0);
-
-      const tpPct = Number(document.getElementById("tpPct").value || 0);
-      const clPct = Number(document.getElementById("clPct").value || 0);
-
-      if (!buy || !sell || !lots) {
-        alert("Isi dulu: harga beli, harga jual, dan jumlah lot ya peng.");
-        return;
-      }
-
-      const shares = lots * 100; // 1 lot = 100 lembar
-
-      const grossBuy = buy * shares;
-      const grossSell = sell * shares;
-
-      const feeBuy = grossBuy * (feeBuyPct / 100);
-      const feeSell = grossSell * (feeSellPct / 100);
-
-      const netBuy = grossBuy + feeBuy;
-      const netSell = grossSell - feeSell;
-
-      const pl = netSell - netBuy;
-      const plPct = (pl / netBuy) * 100;
-
-      // Target berdasarkan buy (simple % dari harga beli)
-      const tpRaw = buy * (1 + tpPct / 100);
-      const clRaw = buy * (1 - clPct / 100);
-
-      const tp = tpPct ? roundToTick(tpRaw) : 0;
-      const cl = clPct ? roundToTick(clRaw) : 0;
-
-      document.getElementById("resultBox").style.display = "block";
-      document.getElementById("modal").textContent = rupiah(netBuy);
-      document.getElementById("hasil").textContent = rupiah(netSell);
-      document.getElementById("pl").textContent = (pl >= 0 ? "+" : "") + rupiah(pl);
-      document.getElementById("plPct").textContent = plPct.toFixed(2) + "%";
-
-      document.getElementById("tpPrice").textContent = tpPct ? rupiah(tp) : "-";
-      document.getElementById("clPrice").textContent = clPct ? rupiah(cl) : "-";
-    }
-  </script>
 </body>
 </html>
