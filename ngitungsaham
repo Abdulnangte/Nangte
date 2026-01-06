@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hitung Trading</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; max-width: 520px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 12px; }
+    label { display:block; margin-top: 12px; font-size: 14px; }
+    input { width: 100%; padding: 10px; font-size: 16px; margin-top: 6px; }
+    button { width: 100%; padding: 12px; font-size: 16px; margin-top: 14px; }
+    .box { margin-top: 14px; padding: 12px; border: 1px solid #ddd; border-radius: 10px; }
+    .row { display:flex; justify-content:space-between; gap: 10px; margin: 6px 0; }
+    .muted { color:#666; font-size: 13px; }
+    .big { font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>📊 Hitung Trading</h1>
+  <div class="muted">Input harga & lot, lalu hitung profit/loss.</div>
+
+  <label>Harga Beli (Rp)</label>
+  <input id="buyPrice" type="number" inputmode="numeric" placeholder="contoh: 500" />
+
+  <label>Harga Jual (Rp)</label>
+  <input id="sellPrice" type="number" inputmode="numeric" placeholder="contoh: 560" />
+
+  <label>Jumlah Lot</label>
+  <input id="lots" type="number" inputmode="numeric" placeholder="contoh: 10" />
+
+  <label>Biaya (fee) beli % (opsional)</label>
+  <input id="feeBuy" type="number" inputmode="decimal" placeholder="contoh: 0.15" />
+
+  <label>Biaya (fee) jual % (opsional)</label>
+  <input id="feeSell" type="number" inputmode="decimal" placeholder="contoh: 0.25" />
+
+  <button onclick="calc()">Hitung</button>
+
+  <div class="box" id="resultBox" style="display:none;">
+    <div class="row"><div>Modal</div><div id="modal">-</div></div>
+    <div class="row"><div>Hasil Jual</div><div id="hasil">-</div></div>
+    <div class="row"><div>Profit / Loss</div><div id="pl" class="big">-</div></div>
+    <div class="row"><div>% Profit</div><div id="plPct">-</div></div>
+  </div>
+
+  <script>
+    function rupiah(n) {
+      return "Rp " + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function calc() {
+      const buy = Number(document.getElementById("buyPrice").value);
+      const sell = Number(document.getElementById("sellPrice").value);
+      const lots = Number(document.getElementById("lots").value);
+      const feeBuyPct = Number(document.getElementById("feeBuy").value || 0);
+      const feeSellPct = Number(document.getElementById("feeSell").value || 0);
+
+      if (!buy || !sell || !lots) {
+        alert("Isi dulu: harga beli, harga jual, dan jumlah lot ya peng.");
+        return;
+      }
+
+      const shares = lots * 100; // 1 lot = 100 lembar
+      const grossBuy = buy * shares;
+      const grossSell = sell * shares;
+
+      const feeBuy = grossBuy * (feeBuyPct / 100);
+      const feeSell = grossSell * (feeSellPct / 100);
+
+      const netBuy = grossBuy + feeBuy;
+      const netSell = grossSell - feeSell;
+
+      const pl = netSell - netBuy;
+      const plPct = (pl / netBuy) * 100;
+
+      document.getElementById("resultBox").style.display = "block";
+      document.getElementById("modal").textContent = rupiah(netBuy);
+      document.getElementById("hasil").textContent = rupiah(netSell);
+      document.getElementById("pl").textContent = (pl >= 0 ? "+" : "") + rupiah(pl);
+      document.getElementById("plPct").textContent = plPct.toFixed(2) + "%";
+    }
+  </script>
+</body>
+</html>
